@@ -10,9 +10,7 @@ Install the npm package on your Node.js server.
 $ npm install @gluwa/gluwa-js
 ```
 
-{% hint style="warning" %}
 Never use Gluwa SDK on the client side or make your private key public.
-{% endhint %}
 
 Create and initialize a `Gluwa` object. Then, enter the `APIKey`, `APISecret` and `WebookSecret` generated from the [Gluwa Dashboard](https://dashboard.gluwa.com), and an Ethereum wallet to manage your funds. You can use credentials from sandbox dashboard and a Rinkeby wallet if you want to test in the sandbox environment.
 
