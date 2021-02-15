@@ -43,7 +43,7 @@ Now you are ready to use the Gluwa API.
 
 ## Method Examples
 
-#### [Create a New Transaction](../api/api.md#create-a-new-transaction)
+#### [Create a New Transaction](https://docs.gluwa.com/api/api.md#create-a-new-transaction)
 
 ```javascript
 const Currency = '{USDG or sUSDCG or KRWG}'; // e.g USDG
@@ -53,7 +53,7 @@ const Target = '{Receiver`s Address}'; // e.g 0xf04349B4A760F5Aed02131e0dAA9bB99
 const resultPromise = await Gluwa.postTransaction(Currency, Amount, Target);
 ```
 
-#### [Create a Payment QR Code](../api/api.md#create-a-payment-qr-code)
+#### [Create a Payment QR Code](https://docs.gluwa.com/api/api.md#create-a-payment-qr-code)
 
 ```php
 const Currency = '{USDG or sUSDCG or KRWG}'; // e.g USDG
@@ -73,7 +73,7 @@ const resultPromise = await Gluwa.getPaymentQRCode(Currency, Amount, Optionals);
 <img src="data:image/png;base64,{BASE64_STRING_YOU_RECEIVED}" alt="Gluwa Payment QR Code">
 ```
 
-#### [List Transaction History for an Address](../api/api.md#list-transaction-history-for-an-address)
+#### [List Transaction History for an Address](https://docs.gluwa.com/api/api.md#list-transaction-history-for-an-address)
 
 ```javascript
 const Currency = '{USDG or sUSDCG or KRWG}'; // e.g USDG
@@ -86,7 +86,7 @@ const Optionals = {
 const resultPromise = await Gluwa.getTransactionHistory(Currency, Optionals);
 ```
 
-#### [Retrieve Transaction Details by Hash](../api/api.md#retrieve-transaction-details-by-hash)
+#### [Retrieve Transaction Details by Hash](https://docs.gluwa.com/api/api.md#retrieve-transaction-details-by-hash)
 
 ```php
 const Currency = '{USDG or sUSDCG or KRWG}'; // e.g USDG
@@ -95,7 +95,7 @@ const Hash = '{Transaction hash}';
 const resultPromise = await Gluwa.getTransactionDetail(Currency, Hash);
 ```
 
-#### [Retrieve a Balance for an Address](../api/api.md#retrieve-a-balance-for-an-address)
+#### [Retrieve a Balance for an Address](https://docs.gluwa.com/api/api.md#retrieve-a-balance-for-an-address)
 
 ```php
 const Currency = '{USDG or sUSDCG or KRWG}'; // e.g USDG
@@ -103,7 +103,7 @@ const Currency = '{USDG or sUSDCG or KRWG}'; // e.g USDG
 const resultPromise = await Gluwa.getAddresses(Currency);
 ```
 
-#### [Webhook Validation](webhooks.md#step-3-verify-your-wallet-address)
+#### [Webhook Validation](https://docs.gluwa.com/development/webhooks#step-3-verify-your-wallet-address)
 
 When user completes transfer via the QR code, the Gluwa API sends a webhook to your webhook endpoint. Verify that the values ​​actually sent by the Gluwa server are correct.
 
