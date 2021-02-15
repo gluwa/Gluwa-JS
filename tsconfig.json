@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "sourceMap": true,
+        "baseUrl": "src",
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true
+    },
+    "exclude": ["node_modules"]
+}
