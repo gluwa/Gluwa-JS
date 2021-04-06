@@ -160,7 +160,10 @@ export default class Gluwa {
     try {
       let amount = ethers.utils.parseEther(args.Amount).toString();
       let fee = ethers.utils.parseEther(args.Fee).toString();
-      if (args.Currency === 'sUSDCG') {
+      if (
+        args.Currency === 'sUSDCG' ||
+        args.Currency === 'sNGNG'
+      ) {
         amount = amount.substr(0, amount.length - 12);
         fee = fee.substr(0, fee.length - 12);
       }
