@@ -7,6 +7,7 @@ export enum CURRENCY_TYPES {
   USDG = 'USDG',
   sUSDCG = 'sUSDCG',
   KRWG = 'KRWG',
+  sNGNG = 'sNGNG',
 }
 
 export const CONFIG = {
@@ -30,6 +31,10 @@ export const CONTRACT_ADDRESS = {
   KRWG: {
     prod: '0x4cc8486f2f3dce2d3b5e27057cf565e16906d12d',
     sandbox: '0x408b7959b3e15b8b1e8495fa9cb123c0180d44db',
+  },
+  sNGNG: {
+    prod: '0xc33496C93AaFf765e4925A4E3b873d5efc635405',
+    sandbox: '0x5cb4744Bb6bcC360A63f54499d92c7617F0a8f8c',
   },
 };
 
