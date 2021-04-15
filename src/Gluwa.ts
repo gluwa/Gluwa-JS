@@ -4,6 +4,7 @@ import { Base64 } from 'js-base64';
 import CryptoJS from 'crypto-js';
 
 import { getReqConfig } from './common/apis';
+import { getStringOfRandomNumbers } from './common/utils';
 import { ENV_TYPES, CURRENCY_TYPES, CONFIG, CONTRACT_ADDRESS } from './common/constants';
 
 /**
@@ -259,7 +260,7 @@ export default class Gluwa {
   ): Promise<AxiosPromise<string> | Error> {
     try {
       const Fee = await this.getFee(Currency);
-      const Nonce = new Date().getTime().toString();
+      const Nonce = `${new Date().getTime().toString()}${getStringOfRandomNumbers(4)}`;
 
       if (Fee instanceof Error) {
         return Error(`postTransaction :: ${Fee.message}`);
