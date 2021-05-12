@@ -260,7 +260,7 @@ export default class Gluwa {
   ): Promise<AxiosPromise<string> | Error> {
     try {
       const Fee = await this.getFee(Currency);
-      const Nonce = `${new Date().getTime().toString()}${getStringOfRandomNumbers(4)}`;
+      const Nonce = `${getStringOfRandomNumbers(75)}`;
 
       if (Fee instanceof Error) {
         return Error(`postTransaction :: ${Fee.message}`);
