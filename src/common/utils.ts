@@ -1,13 +1,16 @@
 global.crypto = require('crypto');
 
 export const getStringOfRandomNumbers = (length) => {
-  const places = 10 ** length;
-  // crypto.randomInt([min, ]max) returns min(default; 0) <= n < max
-  let num = crypto.randomInt(places).toString();
+  let num = '';
 
-  // put leading zeros
-  while (num.length < length) {
-    num = `0${num}`;
+  for (let i = 0; i < length; i += 1) {
+    // crypto.randomInt([min, ]max) returns min(default; 0) <= n < max
+    num += crypto.randomInt(10).toString();
+  }
+
+  if (num.charAt(0) === '0') {
+    const tmp = crypto.randomInt(1, 10).toString();
+    num.replace('0', tmp);
   }
 
   return num;
