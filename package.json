@@ -1,13 +1,13 @@
 {
   "name": "@gluwa/gluwa-js",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Gluwa-JS",
   "keywords": [
     "gluwa",
     "gluwa-js"
   ],
   "author": "Gluwa",
-  "homepage": "https://gluwa.com/",
+  "homepage": "https://www.npmjs.com/package/@gluwa/gluwa-js",
   "bugs": {
     "url": "https://github.com/gluwa/Gluwa-JS/issues",
     "email": "support@gluwa.com"
