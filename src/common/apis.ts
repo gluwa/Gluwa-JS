@@ -4,6 +4,7 @@ import { Maybe } from './types';
 interface IParamForReq {
   APIHost?: string;
   Currency?: string;
+  Amount?:  number;
   AuthForHeader?: string;
   Signature?: string;
   TxnHash?: string;
@@ -38,7 +39,7 @@ export function getReqConfig(reqName: string, paramForReq: Maybe<IParamForReq>):
       return {
         method: 'GET',
         mode: 'CORS',
-        url: `${paramForReq.APIHost}/v1/${paramForReq.Currency}/Fee`,
+        url: `${paramForReq.APIHost}/v1/${paramForReq.Currency}/Fee?amount=${paramForReq.Amount}`,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json;charset=UTF-8',

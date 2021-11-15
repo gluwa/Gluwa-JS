@@ -118,11 +118,12 @@ export default class Gluwa {
    *
    * @param Currency
    */
-  async getFee(Currency: CURRENCY_TYPES): Promise<string | Error> {
+  async getFee(Currency: CURRENCY_TYPES, Amount: number): Promise<string | Error> {
     try {
       const fetchConfig = getReqConfig('getFee', {
         APIHost: this.APIHost,
         Currency,
+        Amount,
       });
 
       const response = await axios(fetchConfig);
@@ -264,7 +265,7 @@ export default class Gluwa {
     Target: string,
   ): Promise<AxiosPromise<string> | Error> {
     try {
-      const Fee = await this.getFee(Currency);
+      const Fee = await this.getFee(Currency, Amount);
       const Nonce = `${getStringOfRandomNumbers(75)}`;
 
       if (Fee instanceof Error) {
