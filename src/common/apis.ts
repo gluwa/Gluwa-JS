@@ -1,10 +1,11 @@
 import { AxiosRequestConfig } from 'axios';
+import { NET_TYPES, CONFIG } from './constants';
 import { Maybe } from './types';
 
 interface IParamForReq {
-  APIHost?: string;
+  env?: string;
   Currency?: string;
-  Amount?:  number;
+  Amount?: string;
   AuthForHeader?: string;
   Signature?: string;
   TxnHash?: string;
@@ -34,12 +35,24 @@ interface IReqConfig extends AxiosRequestConfig {
  * @returns {IReqConfig} Configuration object for request
  */
 export function getReqConfig(reqName: string, paramForReq: Maybe<IParamForReq>): IReqConfig {
+  const { APIHost } = CONFIG[paramForReq.env];
+
   switch (reqName) {
+    case 'getContractAddress':
+      return {
+        method: 'GET',
+        mode: 'CORS',
+        url: `https://api.gluwa.com/V1/Contract/Address/${paramForReq.Currency}/${NET_TYPES[paramForReq.env]}`,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+      };
     case 'getFee':
       return {
         method: 'GET',
         mode: 'CORS',
-        url: `${paramForReq.APIHost}/v1/${paramForReq.Currency}/Fee?amount=${paramForReq.Amount}`,
+        url: `${APIHost}/v1/${paramForReq.Currency}/Fee?amount=${paramForReq.Amount}`,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json;charset=UTF-8',
@@ -48,7 +61,7 @@ export function getReqConfig(reqName: string, paramForReq: Maybe<IParamForReq>):
     case 'getPaymentQRCode':
       return {
         method: 'POST',
-        url: `${paramForReq.APIHost}/v1/QRCode`,
+        url: `${APIHost}/v1/QRCode`,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json;charset=UTF-8',
@@ -59,17 +72,17 @@ export function getReqConfig(reqName: string, paramForReq: Maybe<IParamForReq>):
     case 'postTransactions':
       return {
         method: 'POST',
-        url: `${paramForReq.APIHost}/v1/Transactions`,
+        url: `${APIHost}/v1/Transactions`,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        data:  JSON.stringify(paramForReq.data),
+        data: JSON.stringify(paramForReq.data),
       };
     case 'getTransactionHistory':
       return {
         method: 'GET',
-        url: `${paramForReq.APIHost}/v1/${paramForReq.Currency}/Addresses/${paramForReq.MasterEthereumAddress}/Transactions`,
+        url: `${APIHost}/v1/${paramForReq.Currency}/Addresses/${paramForReq.MasterEthereumAddress}/Transactions`,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json;charset=UTF-8',
@@ -80,7 +93,7 @@ export function getReqConfig(reqName: string, paramForReq: Maybe<IParamForReq>):
     case 'getTransactionDetail':
       return {
         method: 'GET',
-        url: `${paramForReq.APIHost}/v1/${paramForReq.Currency}/Transactions/${paramForReq.TxnHash}`,
+        url: `${APIHost}/v1/${paramForReq.Currency}/Transactions/${paramForReq.TxnHash}`,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json;charset=UTF-8',
@@ -90,7 +103,7 @@ export function getReqConfig(reqName: string, paramForReq: Maybe<IParamForReq>):
     case 'getAddresses':
       return {
         method: 'GET',
-        url: `${paramForReq.APIHost}/v1/${paramForReq.Currency}/Addresses/${paramForReq.MasterEthereumAddress}`,
+        url: `${APIHost}/v1/${paramForReq.Currency}/Addresses/${paramForReq.MasterEthereumAddress}`,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json;charset=UTF-8',
