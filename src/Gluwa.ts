@@ -5,7 +5,8 @@ import CryptoJS from 'crypto-js';
 
 import { getReqConfig } from './common/apis';
 import { getStringOfRandomNumbers } from './common/utils';
-import { ENV_TYPES, CURRENCY_TYPES, CONFIG, CONTRACT_ADDRESS } from './common/constants';
+import { ENV_TYPES, CURRENCY_TYPES } from './common/constants';
+import { IContractAddressData } from './common/types';
 
 /**
  * Gluwa SDK Class for Node.js
@@ -28,21 +29,23 @@ export default class Gluwa {
   env: string;
   APIHost: string;
 
-  constructor({
-    APIKey,
-    APISecret,
-    WebhookSecret,
-    MasterEthereumAddress,
-    MasterEthereumPrivateKey,
-    isDev = false,
-  }: {
-    APIKey: string;
-    APISecret: string;
-    WebhookSecret: string;
-    MasterEthereumAddress: string;
-    MasterEthereumPrivateKey: string;
-    isDev?: boolean;
-  }) {
+  constructor(
+    {
+      APIKey,
+      APISecret,
+      WebhookSecret,
+      MasterEthereumAddress,
+      MasterEthereumPrivateKey,
+      isDev = false,
+    }: {
+      APIKey: string;
+      APISecret: string;
+      WebhookSecret: string;
+      MasterEthereumAddress: string;
+      MasterEthereumPrivateKey: string;
+      isDev?: boolean;
+    }
+  ) {
     if (!APIKey) {
       throw Error('Required "APIKey" key not supplied in config.');
     } else {
@@ -55,7 +58,7 @@ export default class Gluwa {
       this.APISecret = APISecret;
     }
 
-    if (!APISecret) {
+    if (!WebhookSecret) {
       throw Error('Required "WebhookSecret" key not supplied in config.');
     } else {
       this.WebhookSecret = WebhookSecret;
@@ -73,11 +76,8 @@ export default class Gluwa {
       this.MasterEthereumPrivateKey = MasterEthereumPrivateKey;
     }
 
-    const tmpEnvVal = isDev ? ENV_TYPES.SANDBOX : ENV_TYPES.PROD;
-
     this.isDev = isDev;
-    this.env = tmpEnvVal;
-    this.APIHost = CONFIG[tmpEnvVal].APIHost;
+    this.env = isDev ? ENV_TYPES.SANDBOX : ENV_TYPES.PROD;
   }
 
   /**
@@ -92,8 +92,22 @@ export default class Gluwa {
    *
    * @param {CURRENCY_TYPES} Currency
    */
-  getContractAddress(Currency: CURRENCY_TYPES): string {
-    return CONTRACT_ADDRESS[Currency][this.env];
+  async getContractAddressData(Currency: CURRENCY_TYPES): Promise<IContractAddressData | Error> {
+    try {
+      const fetchConfig = getReqConfig('getContractAddress', {
+        env: this.env,
+        Currency,
+      });
+      const response = await axios(fetchConfig);
+
+      if (response && response.status === 200 && response.data && response.data.Address) {
+        return response.data;
+      }
+
+      return Error(`Failed to contract address :: \n${fetchConfig}\n${response}\n\n`);
+    } catch (e) {
+      return Error(`Failed to contract address :: \n${e}\n\n`);
+    }
   }
 
   /**
@@ -102,9 +116,7 @@ export default class Gluwa {
   async getTimestampSignature(): Promise<string | Error> {
     try {
       const timestamp = String(Math.floor(new Date().getTime() / 1000));
-
       const wallet = new ethers.Wallet(this.MasterEthereumPrivateKey);
-
       const signedMessage = await wallet.signMessage(timestamp);
 
       return Base64.btoa(`${timestamp}.${signedMessage}`);
@@ -118,14 +130,13 @@ export default class Gluwa {
    *
    * @param Currency
    */
-  async getFee(Currency: CURRENCY_TYPES, Amount: number): Promise<string | Error> {
+  async getFee(Currency: CURRENCY_TYPES, Amount: string): Promise<string | Error> {
     try {
       const fetchConfig = getReqConfig('getFee', {
-        APIHost: this.APIHost,
+        env: this.env,
         Currency,
         Amount,
       });
-
       const response = await axios(fetchConfig);
 
       if (response && response.status === 200 && response.data && response.data.MinimumFee) {
@@ -160,10 +171,15 @@ export default class Gluwa {
     PrivateForSigning: string;
   }): Promise<string | Error> {
     try {
-      let amount = ethers.utils.parseEther(args.Amount).toString();
-      let fee = ethers.utils.parseEther(args.Fee).toString();
+      let amount: string = ethers.utils.parseEther(args.Amount).toString();
+      let fee: string = ethers.utils.parseEther(args.Fee).toString();
+      const {
+        Address,
+        Currency,
+        Decimals,
+      } = await this.getContractAddressData(args.Currency) as unknown as IContractAddressData;
 
-      if (args.Currency === 'sUSDCG') {
+      if (Decimals && Decimals === 6 || Decimals === '6') {
         if (amount.length > 12) {
           amount = amount.substr(0, amount.length - 12);
         }
@@ -172,17 +188,37 @@ export default class Gluwa {
         }
       }
 
-      const messageHash = ethers.utils.solidityKeccak256(
-        ['address', 'address', 'address', 'uint256', 'uint256', 'uint256'],
-        [
-          this.getContractAddress(args.Currency),
-          args.SendersAddress,
-          args.ReceiversAddress,
-          amount,
-          fee,
-          String(args.Nonce),
-        ],
-      );
+      let messageHash: string;
+      if (Currency === 'USDCG') {
+        // domain value, chain id, contract address, sender, recipient, amount, fee
+        messageHash = ethers.utils.solidityKeccak256(
+          ['uint8', 'uint256', 'address', 'address', 'address', 'uint256', 'uint256', 'uint256'],
+          [
+            3,
+            this.isDev? 4 : 1,
+            String(Address),
+            args.SendersAddress,
+            args.ReceiversAddress,
+            amount,
+            fee,
+            String(args.Nonce),
+          ],
+        );
+      } else {
+        // contract address, sender, recipient, amount, fee, nonce
+        messageHash = ethers.utils.solidityKeccak256(
+          ['address', 'address', 'address', 'uint256', 'uint256', 'uint256'],
+          [
+            String(Address),
+            args.SendersAddress,
+            args.ReceiversAddress,
+            amount,
+            fee,
+            String(args.Nonce),
+          ],
+        );
+
+      }
 
       const messageHashBinary = ethers.utils.arrayify(messageHash);
 
@@ -197,7 +233,7 @@ export default class Gluwa {
   /**
    * Returns Payment QR Code, base 64 encoded string.
    *
-   * @param {CURRENCY_TYPES} Currency USDG or sUSDCG or KRWG
+   * @param {CURRENCY_TYPES} Currency USDCG or sUSDCG or KRWG
    * @param {string} Amount Sending Amount
    * @param {string} Note (optional)
    * @param {string} Expiry (optional)
@@ -206,11 +242,7 @@ export default class Gluwa {
   async getPaymentQRCode(
     Currency: CURRENCY_TYPES,
     Amount: string,
-    {
-      Note,
-      Expiry,
-      MerchantOrderID,
-    }: {
+    paramObj: {
       Note: string;
       Expiry: string;
       MerchantOrderID: string;
@@ -223,25 +255,37 @@ export default class Gluwa {
         return Error(`getPaymentQRCode :: ${Signature.message}`);
       }
 
-      const getPaymentQRCodeData: any = {
+      const getPaymentQRCodeData: {
+        Signature: string
+        Currency: string
+        Amount: string,
+        Target: string,
+        MerchantOrderID?: string,
+        Note?: string,
+        Expiry?: string,
+      } = {
         Signature,
         Currency,
         Amount,
         Target: this.MasterEthereumAddress,
       };
 
-      if (MerchantOrderID) {
-        getPaymentQRCodeData.MerchantOrderID = String(MerchantOrderID);
-      }
-      if (Note) {
-        getPaymentQRCodeData.Note = String(Note);
-      }
-      if (Expiry) {
-        getPaymentQRCodeData.Expiry = String(Expiry);
+      try {
+        if (paramObj && paramObj.MerchantOrderID) {
+          getPaymentQRCodeData.MerchantOrderID = String(paramObj.MerchantOrderID);
+        }
+        if (paramObj && paramObj.Note) {
+          getPaymentQRCodeData.Note = String(paramObj.Note);
+        }
+        if (paramObj && paramObj.Expiry) {
+          getPaymentQRCodeData.Expiry = String(paramObj.Expiry);
+        }
+      } catch (e) {
+        console.log('getPaymentQRCode :: ', e, '\n\n\n\n');
       }
 
       const fetchConfig = getReqConfig('getPaymentQRCode', {
-        APIHost: this.APIHost,
+        env: this.env,
         AuthForHeader: this.getAuthorization(),
         data: getPaymentQRCodeData,
       });
@@ -255,12 +299,12 @@ export default class Gluwa {
   /**
    * Create a New Transaction
    *
-   * @param {CURRENCY_TYPES} Currency USDG or sUSDCG or KRWG
+   * @param {CURRENCY_TYPES} Currency USDCG or sUSDCG or KRWG
    * @param {string} Amount Sending Amount
    * @param {string} Target Receiver's Address
    */
   async postTransaction(
-    Currency: CURRENCY_TYPES, //
+    Currency: CURRENCY_TYPES,
     Amount: string,
     Target: string,
   ): Promise<AxiosPromise<string> | Error> {
@@ -269,27 +313,27 @@ export default class Gluwa {
       const Nonce = `${getStringOfRandomNumbers(75)}`;
 
       if (Fee instanceof Error) {
-        return Error(`postTransaction :: ${Fee.message}`);
+        return Error(`postTransaction Fee:: ${Fee.message}`);
       }
 
       const getSignatureArgs = {
         Currency,
         Amount: String(Amount),
-        Fee,
-        Nonce,
-        ReceiversAddress: Target,
-        SendersAddress: this.MasterEthereumAddress,
-        PrivateForSigning: this.MasterEthereumPrivateKey,
+        Fee: String(Fee),
+        Nonce: String(Nonce),
+        ReceiversAddress: String(Target),
+        SendersAddress: String(this.MasterEthereumAddress),
+        PrivateForSigning: String(this.MasterEthereumPrivateKey),
       };
 
       const Signature = await this.getSignature(getSignatureArgs);
 
       if (Signature instanceof Error) {
-        return Error(`postTransaction :: ${Signature.message}`);
+        return Error(`postTransaction Signature :: ${Signature.message}`);
       }
 
       const fetchConfig = getReqConfig('postTransactions', {
-        APIHost: this.APIHost,
+        env: this.env,
         data: {
           Signature,
           Source: this.MasterEthereumAddress,
@@ -310,7 +354,7 @@ export default class Gluwa {
   /**
    * Returns Transaction History List for an Address
    *
-   * @param {CURRENCY_TYPES} Currency USDG or sUSDCG or KRWG
+   * @param {CURRENCY_TYPES} Currency USDCG or sUSDCG or KRWG
    * @param {number} Limit (optional)
    * @param {string} Status (optional)
    * @param {number} Offset (optional)
@@ -337,7 +381,7 @@ export default class Gluwa {
       const fetchConfig = getReqConfig(
         'getTransactionHistory', //
         {
-          APIHost: this.APIHost,
+          env: this.env,
           Currency,
           MasterEthereumAddress: this.MasterEthereumAddress,
           Signature,
@@ -358,7 +402,7 @@ export default class Gluwa {
   /**
    * Retrieve Transaction Details by Hash
    *
-   * @param {CURRENCY_TYPES} Currency USDG or sUSDCG or KRWG
+   * @param {CURRENCY_TYPES} Currency USDCG or sUSDCG or KRWG
    * @param {string} TxnHash
    */
   async getTransactionDetail(Currency: CURRENCY_TYPES, TxnHash: string): Promise<AxiosPromise<string> | Error> {
@@ -372,7 +416,7 @@ export default class Gluwa {
       const fetchConfig = getReqConfig(
         'getTransactionDetail', //
         {
-          APIHost: this.APIHost,
+          env: this.env,
           Currency,
           TxnHash,
           Signature,
@@ -388,14 +432,14 @@ export default class Gluwa {
   /**
    * Retrieve a Balance for an Address
    *
-   * @param {CURRENCY_TYPES} Currency USDG or sUSDCG or KRWG
+   * @param {CURRENCY_TYPES} Currency USDCG or sUSDCG or KRWG
    */
   async getAddresses(Currency: CURRENCY_TYPES): Promise<AxiosPromise<string> | Error> {
     try {
       const fetchConfig = getReqConfig(
         'getAddresses', //
         {
-          APIHost: this.APIHost,
+          env: this.env,
           Currency,
           MasterEthereumAddress: this.MasterEthereumAddress,
         },
@@ -415,8 +459,8 @@ export default class Gluwa {
    */
   validateWebhook(Payload: unknown, Signature: string): boolean {
     const payloadHash = CryptoJS.HmacSHA256(Payload, this.WebhookSecret);
-    // const payloadHash = CryptoJS.HmacSHA256(Payload, 'KuTs7bGJiClWuIbGeSJso7vy0BwukursFI8VPCJ-ZE8xa3v8eUU7zJhhVYtNc14C');
     const payloadHashBase64Encoded = payloadHash.toString(CryptoJS.enc.Base64);
+    // console.log('\n\n\n\n', payloadHashBase64Encoded, '\n\n\n\n');
 
     return payloadHashBase64Encoded === Signature;
   }
