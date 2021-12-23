@@ -31,7 +31,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.24.0",
     "crypto-js": "^4.0.0",
     "ethers": "^5.0.26",
     "js-base64": "^3.6.0"
