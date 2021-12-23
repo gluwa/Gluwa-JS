@@ -190,7 +190,7 @@ export default class Gluwa {
 
       let messageHash: string;
       if (Currency === 'USDCG') {
-        // domain value, chain id, contract address, sender, recipient, amount, fee
+        // domain value, chain id, contract address, sender, recipient, amount, fee, nonce
         messageHash = ethers.utils.solidityKeccak256(
           ['uint8', 'uint256', 'address', 'address', 'address', 'uint256', 'uint256', 'uint256'],
           [
