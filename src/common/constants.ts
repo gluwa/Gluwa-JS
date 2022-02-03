@@ -9,10 +9,10 @@ export enum NET_TYPES {
 }
 
 export enum CURRENCY_TYPES {
+  BTC = 'BTC',
+  GCRE = 'GCRE',
   USDCG = 'USDCG',
   sUSDCG = 'sUSDCG',
-  KRWG = 'KRWG',
-  sKRWCG = 'sKRWCG',
   NGNG = 'NGNG',
   sNGNG = 'sNGNG',
 }
