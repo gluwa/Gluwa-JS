@@ -25,8 +25,28 @@ jobs:
           cmd: install # will run `yarn install` command
       - run: npm run build
       - run: npm pack
+      - uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_APIKEY_PRODUCTION: ${{ secrets.APIKEY_PRODUCTION }}
+          envkey_APISECRET_PRODUCTION: ${{ secrets.APISECRET_PRODUCTION }}
+          envkey_WEBHOOKSECRET_PRODUCTION: ${{ secrets.WEBHOOKSECRET_PRODUCTION }}
+          envkey_MASTERETHEREUMADDRESS_PRODUCTION: ${{ secrets.MASTERETHEREUMADDRESS_PRODUCTION }}
+          envkey_MASTERETHEREUMPRIVATEKEY_PRODUCTION: ${{ secrets.MASTERETHEREUMPRIVATEKEY_PRODUCTION }}
+          envkey_APIKEY_SANDBOX: ${{ secrets.APIKEY_SANDBOX }}
+          envkey_APISECRET_SANDBOX: ${{ secrets.APISECRET_SANDBOX }}
+          envkey_WEBHOOKSECRET_SANDBOX: ${{ secrets.WEBHOOKSECRET_SANDBOX }}
+          envkey_MASTERETHEREUMADDRESS_SANDBOX: ${{ secrets.MASTERETHEREUMADDRESS_SANDBOX }}
+          envkey_MASTERETHEREUMPRIVATEKEY_SANDBOX: ${{ secrets.MASTERETHEREUMPRIVATEKEY_SANDBOX }}
+          envkey_PAYLOAD_SANDBOX: ${{ secrets.PAYLOAD_SANDBOX }}
+          envkey_SIGNATURE_SANDBOX: ${{ secrets.SIGNATURE_SANDBOX }}
+          envkey_PAYLOAD_PRODUCTION: ${{ secrets.PAYLOAD_PRODUCTION }}
+          envkey_SIGNATURE_PRODUCTION: ${{ secrets.SIGNATURE_PRODUCTION }}
+          envkey_TARGETADDRESS_SANDBOX: ${{ secrets.TARGETADDRESS_SANDBOX }}
+          envkey_TARGETADDRESS_PRODUCTION: ${{ secrets.TARGETADDRESS_PRODUCTION }}
+          directory: tests
+          file_name: .env
+          fail_on_empty: true
       - run: |
              cd tests
-             echo ${{ secrets.ENV_FILE }} > .env
              npm install ../gluwa-gluwa-js-$(node -p "require('../package.json').version").tgz
              npm test
