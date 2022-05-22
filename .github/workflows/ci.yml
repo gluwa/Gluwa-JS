@@ -1,0 +1,32 @@
+name: Basic CI w/ Tests
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the dev branch
+  pull_request:
+  push:
+    branches:
+      - master
+      - dev
+      - feature/*
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install # will run `yarn install` command
+      - run: npm run build
+      - run: npm pack
+      - run: |
+             cd tests
+             ${{ secrets.ENV_FILE }} > .env
+             npm install ../gluwa-gluwa-js-$(node -p "require('../package.json').version").tgz
+             npm test
