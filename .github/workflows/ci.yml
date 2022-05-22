@@ -27,6 +27,6 @@ jobs:
       - run: npm pack
       - run: |
              cd tests
-             ${{ secrets.ENV_FILE }} > .env
+             echo ${{ secrets.ENV_FILE }} > .env
              npm install ../gluwa-gluwa-js-$(node -p "require('../package.json').version").tgz
              npm test
