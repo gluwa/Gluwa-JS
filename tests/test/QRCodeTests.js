@@ -17,7 +17,7 @@ describe("Tests for creating a payment QR Code.", function () {
     const optionals = {
         Note: '',
         MerchantOrderID: '012345678901234567890123456789012345678901234567890123456789',
-        Expirty: '86400'
+        Expiry: '86400'
     }
 
     var testname;
@@ -41,6 +41,17 @@ describe("Tests for creating a payment QR Code.", function () {
                     assert.fail(error);
                 });
         });
+
+        it("Post_QRCode_with_Payload_sUSDCG_Pos", function () {
+            return Gluwa.getQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assertion.handleAssertionStatusCode(result, testname, 200);
+                }).catch((error) => {
+                    assertion.handleUnexpectedErrorMsg(error, testname);
+                    assert.fail(error);
+                });
+        });
+
 
         // Todo: undo the comment after sKRWCG is supported
         // it("Post_QRCode_sKRWCG_NoNote_Pos", function () {
