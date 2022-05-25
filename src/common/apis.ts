@@ -69,6 +69,17 @@ export function getReqConfig(reqName: string, paramForReq: Maybe<IParamForReq>):
         },
         data: JSON.stringify(paramForReq.data),
       };
+    case 'getQRCodeWithPayload':
+      return {
+        method: 'POST',
+        url: `${APIHost}/v1/QRCode/payload`,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: `Basic ${paramForReq.AuthForHeader}`,
+        },
+        data: JSON.stringify(paramForReq.data),
+      };
     case 'postTransactions':
       return {
         method: 'POST',

@@ -297,6 +297,73 @@ export default class Gluwa {
   }
 
   /**
+   * Returns Payment QR Code, base 64 encoded string with Payload.
+   *
+   * @param {CURRENCY_TYPES} Currency USDCG or sUSDCG or KRWG
+   * @param {string} Amount Sending Amount
+   * @param {Object} paramObj (optional)
+   * @param {string} paramObj.Note (optional)
+   * @param {string} paramObj.Expiry (optional)
+   * @param {string} paramObj.MerchantOrderID (optional)
+   */
+  async getQRCodeWithPayload(
+    Currency: CURRENCY_TYPES,
+    Amount: string,
+    paramObj: {
+      Note: string;
+      Expiry: string;
+      MerchantOrderID: string;
+    },
+  ): Promise<AxiosPromise<string> | Error> {
+    try {
+      const Signature = await this.getTimestampSignature();
+
+      if (Signature instanceof Error) {
+        return Error(`getQRCodeWithPayload :: ${Signature.message}`);
+      }
+
+      const getQRCodeWithPayloadData: {
+        Signature: string
+        Currency: string
+        Amount: string,
+        Target: string,
+        MerchantOrderID?: string,
+        Note?: string,
+        Expiry?: string,
+      } = {
+        Signature,
+        Currency,
+        Amount,
+        Target: this.MasterEthereumAddress,
+      };
+
+      try {
+        if (paramObj && paramObj.MerchantOrderID) {
+          getQRCodeWithPayloadData.MerchantOrderID = String(paramObj.MerchantOrderID);
+        }
+        if (paramObj && paramObj.Note) {
+          getQRCodeWithPayloadData.Note = String(paramObj.Note);
+        }
+        if (paramObj && paramObj.Expiry) {
+          getQRCodeWithPayloadData.Expiry = String(paramObj.Expiry);
+        }
+      } catch (e) {
+        console.log('getQRCodeWithPayload :: ', e, '\n\n\n\n');
+      }
+
+      const fetchConfig = getReqConfig('getQRCodeWithPayload', {
+        env: this.env,
+        AuthForHeader: this.getAuthorization(),
+        data: getQRCodeWithPayloadData,
+      });
+
+      return axios(fetchConfig);
+    } catch (e) {
+      return Error(`getQRCodeWithPayload :: \n${e}\n\n`);
+    }
+  }
+
+  /**
    * Create a New Transaction
    *
    * @param {CURRENCY_TYPES} Currency USDCG or sUSDCG or KRWG

@@ -61,7 +61,7 @@ const Amount = '{Send Amount}'; // e.g 1.581
 const Optionals = {
     Note: '', // optional
     MerchantOrderID: '', // optional
-    Expirty: '1800', // optional, it must be a string
+    Expiry: '1800', // optional, it must be a string
 };
 
 const resultPromise = await Gluwa.getPaymentQRCode(Currency, Amount, Optionals);

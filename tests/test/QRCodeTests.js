@@ -17,7 +17,7 @@ describe("Tests for creating a payment QR Code.", function () {
     const optionals = {
         Note: '',
         MerchantOrderID: '012345678901234567890123456789012345678901234567890123456789',
-        Expirty: '86400'
+        Expiry: '86400'
     }
 
     var testname;
@@ -72,6 +72,68 @@ describe("Tests for creating a payment QR Code.", function () {
                     assert.fail(error);
                 });
         });
+
+        // Start getQRCodeWithPayload tests
+        it("Post_QRCodeWithPayload_GCRE_Pos", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assertion.handleAssertionStatusCode(result, testname, 200);
+                    assert.isTrue(result.data.hasOwnProperty("Base64"));
+                    assert.isTrue(result.data.hasOwnProperty("Data"));
+                }).catch((error) => {
+                    assertion.handleUnexpectedErrorMsg(error, testname);
+                    assert.fail(error);
+                });
+        });
+
+        it("Post_QRCodeWithPayload_USDCG_Pos", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assertion.handleAssertionStatusCode(result, testname, 200);
+                    assert.isTrue(result.data.hasOwnProperty("Base64"));
+                    assert.isTrue(result.data.hasOwnProperty("Data"));
+                }).catch((error) => {
+                    assertion.handleUnexpectedErrorMsg(error, testname);
+                    assert.fail(error);
+                });
+        });
+
+        it("Post_QRCodeWithPayload_sUSDCG_Pos", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assertion.handleAssertionStatusCode(result, testname, 200);
+                    assert.isTrue(result.data.hasOwnProperty("Base64"));
+                    assert.isTrue(result.data.hasOwnProperty("Data"));
+                }).catch((error) => {
+                    assertion.handleUnexpectedErrorMsg(error, testname);
+                    assert.fail(error);
+                });
+        });
+
+        it("Post_QRCodeWithPayload_NGNG_Pos", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assertion.handleAssertionStatusCode(result, testname, 200);
+                    assert.isTrue(result.data.hasOwnProperty("Base64"));
+                    assert.isTrue(result.data.hasOwnProperty("Data"));
+                }).catch((error) => {
+                    assertion.handleUnexpectedErrorMsg(error, testname);
+                    assert.fail(error);
+                });
+        });
+
+        it("Post_QRCodeWithPayload_sNGNG_Pos", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assertion.handleAssertionStatusCode(result, testname, 200);
+                    assert.isTrue(result.data.hasOwnProperty("Base64"));
+                    assert.isTrue(result.data.hasOwnProperty("Data"));
+                }).catch((error) => {
+                    assertion.handleUnexpectedErrorMsg(error, testname);
+                    assert.fail(error);
+                });
+        });
+        // End getQRCodeWithPayload tests
     });
 
     describe("Positive Test Cases With Note.", function() {
@@ -117,6 +179,44 @@ describe("Tests for creating a payment QR Code.", function () {
                     assert.fail(error);
                 });
         });
+
+        // Start getQRCodeWithPayload tests
+        it("Post_QRCodeWithPayload_sUSDCG_Pos", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assertion.handleAssertionStatusCode(result, testname, 200);
+                    assert.isTrue(result.data.hasOwnProperty("Base64"));
+                    assert.isTrue(result.data.hasOwnProperty("Data"));
+                }).catch((error) => {
+                    assertion.handleUnexpectedErrorMsg(error, testname);
+                    assert.fail(error);
+                });
+        });
+
+        it("Post_QRCodeWithPayload_NGNG_Pos", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assertion.handleAssertionStatusCode(result, testname, 200);
+                    assert.isTrue(result.data.hasOwnProperty("Base64"));
+                    assert.isTrue(result.data.hasOwnProperty("Data"));
+                }).catch((error) => {
+                    assertion.handleUnexpectedErrorMsg(error, testname);
+                    assert.fail(error);
+                });
+        });
+
+        it("Post_QRCodeWithPayload_sNGNG_Pos", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assertion.handleAssertionStatusCode(result, testname, 200);
+                    assert.isTrue(result.data.hasOwnProperty("Base64"));
+                    assert.isTrue(result.data.hasOwnProperty("Data"));
+                }).catch((error) => {
+                    assertion.handleUnexpectedErrorMsg(error, testname);
+                    assert.fail(error);
+                });
+        });
+        // End getQRCodeWithPayload tests
     });
 
     describe("Negative Test Cases (Less Than Fee).", function() {
@@ -163,6 +263,17 @@ describe("Tests for creating a payment QR Code.", function () {
                 });
         });
 
+        // Start getQRCodeWithPayload tests
+        it("Post_QRCodeWithPayload_sUSDCG_AmountTooSmall_Neg", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amountLessThanFee, optionals)
+                .then((result) => {
+                    assert.fail("Shouldn't return result.");
+                }).catch((error) => {
+                    assertion.handleAssertionStatusCode(error.response, testname, 400);
+                    assertion.handleNegativeTestError(error, testname, validationErrorCode);
+                });
+        });
+        // End getQRCodeWithPayload tests
     });
 
     describe("Negative Test Cases (Others).", function() {
@@ -197,5 +308,38 @@ describe("Tests for creating a payment QR Code.", function () {
                     assertion.handleNegativeTestError(error, testname, invalidBodyErrorCode, invalidValueErrorCode, longOrderIDErrorMsg);
                 });
         });
+
+        // Start getQRCodeWithPayload tests
+        it("Post_QRCodeWithPayload_BTC_Neg", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assert.fail("Shouldn't return result.");
+                }).catch((error) => {
+                    assertion.handleAssertionStatusCode(error.response, testname, 400);
+                    assertion.handleNegativeTestError(error, testname, invalidBodyErrorCode);
+                });
+        });
+
+        it("Post_QRCodeWithPayload_InvalidBody_Neg", function () {
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assert.fail("Shouldn't return result.");
+                }).catch((error) => {
+                    assertion.handleAssertionStatusCode(error.response, testname, 400);
+                    assertion.handleNegativeTestError(error, testname, invalidBodyErrorCode);
+                });
+        });
+
+        it("Post_QRCodeWithPayload_sUSDCG_LongOrderID_Neg", function () {
+            optionals.MerchantOrderID = "1012345678901234567890123456789012345678901234567890123456789";
+            return Gluwa.createQRCodeWithPayload(currency, amount, optionals)
+                .then((result) => {
+                    assert.fail("Shouldn't return result.");
+                }).catch((error) => {
+                    assertion.handleAssertionStatusCode(error.response, testname, 400);
+                    assertion.handleNegativeTestError(error, testname, invalidBodyErrorCode, invalidValueErrorCode, longOrderIDErrorMsg);
+                });
+        });
+        // End getQRCodeWithPayload tests
     });
 });
