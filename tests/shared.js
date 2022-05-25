@@ -3,7 +3,7 @@ const Gluwa = require('./setup').Gluwa;
 
 // modify this boolean to false if need to test in production environment
 const isSandbox = true;
-const currencyList = ["sUSDCG", "sKRWCG", "NGNG", "sNGNG", "BTC"];
+const currencyList = ["sUSDCG", "sKRWCG", "NGNG", "sNGNG", "BTC", "GCRE", "USDCG"];
 
 async function getBalance(currency) {
     setEnvironment(isSandbox);
@@ -20,6 +20,12 @@ async function createTransaction(currency, amount, target) {
 async function createQRCode(currency, amount, optionals) {
     setEnvironment(isSandbox);
     const resultPromise = await Gluwa.getPaymentQRCode(currency, amount, optionals);
+    return resultPromise;
+}
+
+async function createQRCodeWithPayload(currency, amount, optionals) {
+    setEnvironment(isSandbox);
+    const resultPromise = await Gluwa.getQRCodeWithPayload(currency, amount, optionals);
     return resultPromise;
 }
 
@@ -88,5 +94,5 @@ function getAmount(currency, testcase) {
     return amount;
 }
 
-module.exports = { isSandbox, getBalance, createTransaction, createQRCode, 
+module.exports = { isSandbox, getBalance, createTransaction, createQRCode, createQRCodeWithPayload, 
     getTransactionHistory, getTransactionDetail, getWebhookValidation, getCurrencyFromTestName, getAmount }
