@@ -108,3 +108,7 @@ typings/
 # Lock
 package-lock.json
 yarn.lock
+tests/.secrets
+
+# Build files
+dist/
