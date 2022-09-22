@@ -57,20 +57,20 @@ describe("Tests for getting transaction history by hash", function() {
         //         });
         // });
 
-        it("Get_TransactionsHash_NGNG_Pos", function() {
-            return Gluwa.getTransactionHistory(currency,optionals)
-                .then((result) => {
-                    const transcation = result.data[0];
-                    const hash = transcation.TxnHash;
-                    assertion.handleAssertionStatusCode(result, testname, 200);
-                    return Gluwa.getTransactionDetail(currency, hash);
-                }).then((result) => {
-                    assertion.handleAssertionStatusCode(result, testname, 200);
-                }).catch((error) => {
-                    assertion.handleUnexpectedErrorMsg(error, testname);
-                    assert.fail(error);
-                });
-        });
+        // it("Get_TransactionsHash_NGNG_Pos", function() {
+        //     return Gluwa.getTransactionHistory(currency,optionals)
+        //         .then((result) => {
+        //             const transcation = result.data[0];
+        //             const hash = transcation.TxnHash;
+        //             assertion.handleAssertionStatusCode(result, testname, 200);
+        //             return Gluwa.getTransactionDetail(currency, hash);
+        //         }).then((result) => {
+        //             assertion.handleAssertionStatusCode(result, testname, 200);
+        //         }).catch((error) => {
+        //             assertion.handleUnexpectedErrorMsg(error, testname);
+        //             assert.fail(error);
+        //         });
+        // });
 
         it("Get_TransactionsHash_sNGNG_Pos", function() {
             return Gluwa.getTransactionHistory(currency,optionals)
