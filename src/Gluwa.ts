@@ -195,7 +195,7 @@ export default class Gluwa {
           ['uint8', 'uint256', 'address', 'address', 'address', 'uint256', 'uint256', 'uint256'],
           [
             3,
-            this.isDev? 4 : 1,
+            this.isDev? 5 : 1,
             String(Address),
             args.SendersAddress,
             args.ReceiversAddress,

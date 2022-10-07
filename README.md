@@ -12,7 +12,7 @@ $ npm install @gluwa/gluwa-js
 
 Never use Gluwa SDK on the client side or make your private key public.
 
-Create and initialize a `Gluwa` object. Then, enter the `APIKey`, `APISecret` and `WebookSecret` generated from the [Gluwa Dashboard](https://dashboard.gluwa.com), and an Ethereum wallet to manage your funds. You can use credentials from sandbox dashboard and a Rinkeby wallet if you want to test in the sandbox environment.
+Create and initialize a `Gluwa` object. Then, enter the `APIKey`, `APISecret` and `WebookSecret` generated from the [Gluwa Dashboard](https://dashboard.gluwa.com), and an Ethereum wallet to manage your funds. You can use credentials from sandbox dashboard and a Goerli wallet if you want to test in the sandbox environment.
 
 ```javascript
 const GluwaJS = require('@gluwa/gluwa-js');
@@ -21,7 +21,7 @@ const GluwaConfig = {
     production: {
         APIKey: '{Your production API Key}',
         APISecret: '{Your production API Secret}',
-        WebhookSecret: '{Your production Webhhok Secret}',
+        WebhookSecret: '{Your production Webhook Secret}',
         MasterEthereumAddress: '{Your Ethereum Address for production}',
         MasterEthereumPrivateKey: '{Your Ethereum Private Key for production}',
         isDev: false,
@@ -29,7 +29,7 @@ const GluwaConfig = {
     sandbox: {
         APIKey: '{Your sandbox API Key}',
         APISecret: '{Your sandbox API Secret}',
-        WebhookSecret: '{Your sandbox Webhhok Secret}',
+        WebhookSecret: '{Your sandbox Webhook Secret}',
         MasterEthereumAddress: '{Your Ethereum Address for sandbox}',
         MasterEthereumPrivateKey: '{Your Ethereum Private Key for sandbox}',
         isDev: true,
