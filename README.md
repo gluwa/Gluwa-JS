@@ -1,5 +1,7 @@
 # Gluwa SDK for Javascript \(Node.js\)
 
+**Dear users, Sandbox environment has been deprecated, please update your code to avoid any further errors**
+
 If your service is developed in Node.js, the features we provide are available through the SDK. The Gluwa SDK for Node.js is a library with powerful features that enable Node.js developers to easily make requests to the Gluwa APIs.
 
 ## Getting started
