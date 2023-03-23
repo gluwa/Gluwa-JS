@@ -77,7 +77,7 @@ export default class Gluwa {
     }
 
     this.isDev = isDev;
-    this.env = isDev ? ENV_TYPES.SANDBOX : ENV_TYPES.PROD;
+    this.env = isDev ? ENV_TYPES.TEST : ENV_TYPES.PROD;
   }
 
   /**
